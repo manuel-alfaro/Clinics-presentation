@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SmartRehab - Presentation</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&family=Roboto:wght@300;400;700&family=Inter:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <style>
+        :root {
+            --color-brand-black: #0D0D0D;
+            --color-brand-accent: rgb(47, 124, 83);
+            --color-brand-white: #FFFFFF;
+            --color-grey-lightest: #D9D9D9;
+            --font-primary: 'Roboto', sans-serif;
+            --header-font: 'Plus Jakarta Sans', sans-serif;
+            --font-weight-light: 300;
+            --font-weight-bold: 700;
+            --letter-spacing-tight: -0.04em;
+        }
+
+        body, html {
+            margin: 0; padding: 0;
+            width: 100%; height: 100%;
+            overflow: hidden;
+            background-color: var(--color-brand-black);
+            color: var(--color-grey-lightest);
+            font-family: var(--font-primary);
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* --- LAYERING --- */
+        #aurora-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        
+        .main-image-bg { 
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(1); 
+            width: 70%; height: 60%; object-fit: contain; 
+            filter: drop-shadow(0 0 60px rgba(47, 124, 83, 0.2));
+            z-index: 3; opacity: 0.85; 
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            pointer-events: none;
+        }
+
+        .main-image-bg.zoomed-out {
+            width: 35%; height: 35%; 
+            opacity: 0.8;
+            transform: translate(-50%, -65%) scale(0.85); 
+        }
+
+        .main-image-bg.force-hide { opacity: 0 !important; visibility: hidden !important; }
+
+        #synapse-container { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            z-index: 50; pointer-events: none; 
+        }
+
+        .grain-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; 
+            pointer-events: none; opacity: 0.03; 
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); 
+        }
+        
+        /* --- TYPOGRAPHY --- */
+        .grad-aurora { 
+            background: linear-gradient(135deg, var(--color-brand-accent) 0%, #818CF8 100%); 
+            -webkit-background-clip: text; 
+            -webkit-text-fill-color: transparent; 
+            background-clip: text;
+            display: inline-block;
+        }
+
+        .branding-text-bold { 
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            font-weight: 800; 
+            letter-spacing: var(--letter-spacing-tight); 
+            line-height: 1.25; /* Increased to fix descenders (g, y, j) */
+            font-family: var(--header-font);
+            padding-bottom: 0.1em; /* Extra safety for cutting */
+        }
+
+        .sub-label { 
+            font-size: 1.1rem; 
+            color: rgba(255, 255, 255, 0.6); 
+            text-transform: uppercase; 
+            letter-spacing: 0.25em; 
+            font-weight: var(--font-weight-light);
+            display: block;
+        }
+
+        /* --- GLOBAL NAV GRID --- */
+        #global-nav-grid {
+            position: fixed; z-index: 100;
+            display: grid; grid-template-columns: repeat(5, 1fr);
+            gap: 20px; width: 100%; max-width: 1200px;
+            left: 50%; bottom: 120px; transform: translateX(-50%);
+            transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+            opacity: 0; pointer-events: none;
+        }
+
+        #global-nav-grid.visible { opacity: 1; pointer-events: auto; }
+
+        /* --- HORIZONTAL CARDS --- */
+        .service-card {
+            background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 2.2rem 1rem; text-align: center;
+            border-radius: 4px;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(15px);
+            min-height: 190px;
+            width: 100%;
+        }
+
+        .service-card i { font-size: 3rem; color: #fff; margin-bottom: 1rem; }
+        .brand-suffix { font-size: 1.2rem; font-weight: 800; letter-spacing: -0.01em; line-height: 1.1; }
+
+        .service-card.active-topic {
+            background: rgba(47, 124, 83, 0.25);
+            border-color: var(--color-brand-accent);
+            box-shadow: 0 0 50px rgba(47, 124, 83, 0.4);
+        }
+
+        /* --- VERTICAL SIDEBAR --- */
+        #global-nav-grid.sidebar-layout {
+            grid-template-columns: 1fr;
+            width: 180px; left: 40px; top: 50%; bottom: auto;
+            transform: translateY(-50%); gap: 10px;
+        }
+
+        #global-nav-grid.sidebar-layout .service-card {
+            padding: 1.2rem 0.8rem;
+            min-height: 100px;
+        }
+
+        #global-nav-grid.sidebar-layout .service-card i {
+            font-size: 1.8rem;
+            margin-bottom: 0.6rem;
+        }
+
+        #global-nav-grid.sidebar-layout .brand-suffix {
+            font-size: 0.9rem;
+        }
+
+        /* --- SLIDE SYSTEM --- */
+        #slides-wrapper { position: relative; z-index: 40; width: 100%; height: 100%; }
+        .slide {
+            position: absolute; width: 100%; height: 100%;
+            opacity: 0; visibility: hidden;
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .slide.active { opacity: 1; visibility: visible; }
+
+        /* --- CONTENT REVEAL ANIMATION --- */
+        .content-reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .slide.active .content-reveal {
+            opacity: 1;
+            transform: translateY(0);
+            transition-delay: 0.8s;
+        }
+
+        /* --- STANDARDIZED MEDIA SIZES --- */
+        .portrait-video-container {
+            width: 300px; 
+            height: 533px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            overflow: hidden; 
+            background: #000;
+            border-radius: 4px;
+        }
+
+        .marketing-video-container {
+            width: 220px; 
+            height: 391px;
+        }
+
+        .report-display-card {
+            width: 380px;
+            height: 533px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            background-color: #fff; 
+            transform: rotate(-2deg);
+            transition: transform 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .report-display-card:hover { transform: rotate(0deg) scale(1.05); }
+        .report-img { width: 100%; height: 100%; object-fit: contain; display: block; }
+        .fitness-report-crop { object-fit: cover; object-position: center 35%; transform: scale(1.1); }
+        .deep-dive-video { width: 100%; height: 100%; object-fit: cover; }
+
+        /* --- BUSINESS MODEL SLIDE --- */
+        .concept-triad { display: flex; justify-content: center; align-items: center; gap: 30px; margin: 30px auto; }
+        .triad-item { display: flex; flex-direction: column; align-items: center; gap: 15px; }
+        .triad-icon-box {
+            width: 100px; height: 100px; background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 15px;
+            display: flex; justify-content: center; align-items: center;
+            font-size: 2.5rem; color: var(--color-brand-accent);
+        }
+        .math-symbol { font-size: 2rem; font-weight: bold; color: rgba(255,255,255,0.3); }
+        .result-box {
+            background: var(--color-brand-accent); color: white; padding: 15px 30px;
+            border-radius: 50px; font-size: 1.2rem; font-weight: bold;
+            box-shadow: 0 10px 30px rgba(47, 124, 83, 0.4);
+        }
+        .pricing-consolidated-card {
+            background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px; max-width: 1100px; margin: 30px auto;
+            display: grid; grid-template-columns: 1fr 1fr 1fr; overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        .pricing-option { padding: 30px; text-align: left; border-right: 1px solid rgba(255, 255, 255, 0.1); }
+        .pricing-option:last-child { border-right: none; }
+        .pricing-header { border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 15px; margin-bottom: 15px; }
+        .pricing-title { font-size: 1.2rem; font-weight: bold; color: #fff; margin-bottom: 5px; }
+        .pricing-cost { font-size: 1.8rem; color: var(--color-brand-accent); font-weight: bold; margin-top: 5px; }
+        .pricing-desc { font-size: 0.9rem; color: rgba(255,255,255,0.7); line-height: 1.5; }
+
+        /* --- MARKETING SLIDE SPECIFIC --- */
+        .viral-stat-overlay {
+            position: absolute; bottom: 15px; left: 50%; transform: translateX(-50%);
+            background: rgba(47, 124, 83, 0.95); color: white;
+            padding: 6px 12px; border-radius: 4px; font-weight: 900;
+            text-transform: uppercase; letter-spacing: 2px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 10; pointer-events: none;
+            width: 85%; text-align: center;
+        }
+        .viral-glitch-text { animation: glitch 5s infinite; }
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            2% { transform: translate(-2px, 2px); }
+            4% { transform: translate(-2px, -2px); }
+            6% { transform: translate(2px, 2px); }
+            8% { transform: translate(2px, -2px); }
+            10% { transform: translate(0); }
+        }
+
+        /* --- LOGO --- */
+        .bottom-logo {
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            height: 90px; z-index: 110; opacity: 0.8; pointer-events: none; /* Larger and lower */
+            transition: all 0.5s ease;
+        }
+
+        /* --- INTRO TEXT --- */
+        #title-loop {
+            position: absolute; left: 6rem; top: 6rem; z-index: 60; 
+            text-align: left; width: 100%; transition: all 1s ease;
+        }
+        #title-loop.fade-out { opacity: 0; transform: translateY(-20px); pointer-events: none; }
+        .fade-group { position: absolute; top: 0; left: 0; width: 100%; opacity: 0; white-space: nowrap; }
+        .msg-1 { animation: loopFade1 10s infinite; }
+        .msg-2 { animation: loopFade2 10s infinite; }
+
+        @keyframes loopFade1 {
+            0%, 45% { opacity: 1; transform: translateX(0); visibility: visible; }
+            50%, 95% { opacity: 0; transform: translateX(20px); visibility: hidden; }
+            100% { opacity: 1; transform: translateX(0); visibility: visible; }
+        }
+        @keyframes loopFade2 {
+            0%, 50% { opacity: 0; transform: translateX(-20px); visibility: hidden; }
+            55%, 95% { opacity: 1; transform: translateX(0); visibility: visible; }
+            100% { opacity: 0; transform: translateX(20px); visibility: hidden; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- BAKGRUNNSEFFEKTER -->
+    <div id="aurora-container"><canvas id="auroraCanvas"></canvas></div>
+    <div class="grain-overlay"></div>
+    <div id="synapse-container"><canvas id="synapseCanvas"></canvas></div>
+
+    <img src="https://storage.googleapis.com/files_webpage/Medium%20Transparent.png" class="main-image-bg" id="bg-image">
+
+    <!-- BUNNLOGO -->
+    <img src="https://storage.googleapis.com/intro_alphatek/logo.png" alt="SmartRehab Logo" class="bottom-logo">
+
+    <!-- GLOBAL NAV GRID -->
+    <div id="global-nav-grid">
+        <div class="service-card" id="card-fitness"><i class="ph ph-dna"></i><div class="brand-suffix grad-aurora">FitnessAge™</div></div>
+        <div class="service-card" id="card-shoulder"><i class="ph ph-person-arms-spread"></i><div class="brand-suffix grad-aurora">ShoulderScreening™</div></div>
+        <div class="service-card" id="card-rtp"><i class="ph ph-sneaker-move"></i><div class="brand-suffix grad-aurora">ReturnToPlay™</div></div>
+        <div class="service-card" id="card-run"><i class="ph ph-person-simple-run"></i><div class="brand-suffix grad-aurora">RunSafer™</div></div>
+        <div class="service-card" id="card-senior"><i class="ph ph-users"></i><div class="brand-suffix grad-aurora">SeniorFitness™</div></div>
+    </div>
+
+    <div id="title-loop">
+        <div class="relative h-48 flex flex-col items-start justify-start">
+            <div class="fade-group msg-1">
+                <div class="branding-text-bold grad-aurora">SmartRehab™</div>
+                <div class="sub-label mt-3">Next-gen clinical framework</div>
+            </div>
+            <div class="fade-group msg-2">
+                <div class="sub-label" style="text-transform: none; font-size: 2rem; color: #fff; letter-spacing: -0.01em; margin-top: 1rem;">Is your clinic ready for the shift?</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="slides-wrapper">
+        <div class="slide active" id="slide-0"></div>
+        <div class="slide" id="slide-1">
+            <div class="flex flex-col items-center justify-start h-full text-center pt-24">
+                <div class="branding-text-bold grad-aurora mb-2">SmartRehab™</div>
+                <div class="sub-label">Select clinical protocol</div>
+            </div>
+        </div>
+
+        <!-- Slides 2-6 (Protocols) -->
+        <div class="slide" id="slide-2">
+            <div class="flex flex-row items-center justify-center gap-16 w-full h-full px-20">
+                <div class="flex flex-row items-center gap-16 ml-48 content-reveal">
+                    <div class="shrink-0 portrait-video-container shadow-2xl"><video class="deep-dive-video" id="video-fitness" muted loop playsinline><source src="https://storage.googleapis.com/intro_alphatek/videoer/Videoer%20colo/Age%20Test%202%20-%20NO%20TEXT%20ON%20-%20Alphatatek%20-%204k%20%20(1).mp4" type="video/mp4"></video></div>
+                    <div class="shrink-0 report-display-card"><img src="https://storage.googleapis.com/intro_alphatek/reports/Skjermbilde%202026-01-28%20kl.%2017.38.43.png" alt="Fitness Age Report" class="report-img fitness-report-crop"></div>
+                    <div class="flex flex-col gap-0 max-w-md">
+                        <span class="sub-label mb-2">Motivational Insight</span>
+                        <h3 class="branding-text-bold grad-aurora" style="font-size: 3.5rem;">Fitness Age™</h3>
+                        <p class="text-xl text-white font-light leading-relaxed opacity-80 mt-2">A motivational concept that compares biological age with functional age through objective tests of strength, balance, and function.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-3">
+            <div class="flex flex-row items-center justify-center gap-16 w-full h-full px-20">
+                <div class="flex flex-row items-center gap-16 ml-48 content-reveal">
+                    <div class="shrink-0 portrait-video-container shadow-2xl"><video class="deep-dive-video" id="video-shoulder" muted loop playsinline><source src="https://storage.googleapis.com/intro_alphatek/videoer/Videoer%20colo/Social%20Media%20-%20Alphatatek%20-%20Shoulder%20Test%20-%204k%20%20(1).mp4" type="video/mp4"></video></div>
+                    <div class="shrink-0 report-display-card"><img src="https://storage.googleapis.com/intro_alphatek/reports/shoulder.png" alt="Shoulder Screening Report" class="report-img"></div>
+                    <div class="flex flex-col gap-0 max-w-md">
+                        <span class="sub-label mb-2">Overhead Readiness</span>
+                        <h3 class="branding-text-bold grad-aurora" style="font-size: 3.5rem;">Shoulder Screening™</h3>
+                        <p class="text-xl text-white font-light leading-relaxed opacity-80 mt-2">The ASH test protocol ensures the shoulder is ready for regular loading. Objective analysis of isometric strength and rotational symmetry.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-4">
+            <div class="flex flex-row items-center justify-center gap-16 w-full h-full px-20">
+                <div class="flex flex-row items-center gap-16 ml-48 content-reveal">
+                    <div class="shrink-0 portrait-video-container shadow-2xl"><video class="deep-dive-video" id="video-rtp" muted loop playsinline><source src="https://storage.googleapis.com/intro_alphatek/videoer/Videoer%20colo/NO%20TEXT%20ON%20-%20Alphatatek%20-%20Knee%20Test%20-%204k%20.mp4" type="video/mp4"></video></div>
+                    <div class="shrink-0 report-display-card"><img src="https://storage.googleapis.com/intro_alphatek/reports/Return%20to%20play.png" alt="Return to Play Report" class="report-img"></div>
+                    <div class="flex flex-col gap-0 max-w-md">
+                        <span class="sub-label mb-2">Knee Assessment</span>
+                        <h3 class="branding-text-bold grad-aurora" style="font-size: 3.5rem;">Return to Play™</h3>
+                        <p class="text-xl text-white font-light leading-relaxed opacity-80 mt-2">Robust assessment for determining readiness after knee injuries. Combines objective hop and jump data with symmetry analysis.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-5">
+            <div class="flex flex-row items-center justify-center gap-16 w-full h-full px-20">
+                <div class="flex flex-row items-center gap-16 ml-48 content-reveal">
+                    <div class="shrink-0 portrait-video-container shadow-2xl"><video class="deep-dive-video" id="video-run" muted loop playsinline><source src="https://storage.googleapis.com/intro_alphatek/videoer/Videoer%20colo/Running%20Version%20-%20NO%20TEXT%20ON%20-%20Alphatatek%20-%20Knee%20Test%20-%204k%20.mp4" type="video/mp4"></video></div>
+                    <div class="shrink-0 report-display-card"><img src="https://storage.googleapis.com/intro_alphatek/reports/Return%20to%20play.png" alt="Run Safer Report" class="report-img"></div>
+                    <div class="flex flex-col gap-0 max-w-md">
+                        <span class="sub-label mb-2">Runner Protocol</span>
+                        <h3 class="branding-text-bold grad-aurora" style="font-size: 3.5rem;">Run Safer™</h3>
+                        <p class="text-xl text-white font-light leading-relaxed opacity-80 mt-2">A specific protocol to ensure a safe and effective return to running. Establishes performance baselines and tracks loading tolerance.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide" id="slide-6">
+            <div class="flex flex-row items-center justify-center gap-16 w-full h-full px-20">
+                <div class="flex flex-row items-center gap-16 ml-48 content-reveal">
+                    <div class="shrink-0 portrait-video-container shadow-2xl"><video class="deep-dive-video" id="video-senior" muted loop playsinline><source src="https://storage.googleapis.com/intro_alphatek/videoer/Videoer%20colo/Age%20Test%20-%20NO%20TEXT%20ON%20-%20Alphatatek%20-%204k%20.mp4" type="video/mp4"></video></div>
+                    <div class="shrink-0 report-display-card"><img src="https://storage.googleapis.com/intro_alphatek/reports/senior%20raport.png" alt="Senior Fitness Report" class="report-img"></div>
+                    <div class="flex flex-col gap-0 max-w-md">
+                        <span class="sub-label mb-2">Fall Prevention</span>
+                        <h3 class="branding-text-bold grad-aurora" style="font-size: 3.5rem;">Senior Fitness™</h3>
+                        <p class="text-xl text-white font-light leading-relaxed opacity-80 mt-2">Assesses fall risk by testing balance, strength, and function. Vital for maintaining independence and active longevity in seniors.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 7: Business Model -->
+        <div class="slide" id="slide-7">
+            <div class="flex flex-col items-center justify-center h-full px-20 content-reveal">
+                <header class="text-center mb-6">
+                    <span class="sub-label mb-2">Clinic Revenue</span>
+                    <h2 class="branding-text-bold grad-aurora" style="font-size: 3rem;">Build Your Business Model</h2>
+                    <p class="text-lg text-white opacity-60 max-w-2xl mx-auto mt-2">Combine traditional assessment with advanced objective data to create high-value packages.</p>
+                </header>
+                <div class="concept-triad">
+                    <div class="triad-item"><div class="triad-icon-box"><i class="ph ph-barbell"></i></div><span class="text-xs uppercase tracking-widest font-bold text-white opacity-60">Strength</span></div>
+                    <div class="math-symbol">+</div>
+                    <div class="triad-item"><div class="triad-icon-box"><i class="ph ph-brain"></i></div><span class="text-xs uppercase tracking-widest font-bold text-white opacity-60">Psychology</span></div>
+                    <div class="math-symbol">+</div>
+                    <div class="triad-item"><div class="triad-icon-box"><i class="ph ph-sneaker-move"></i></div><span class="text-xs uppercase tracking-widest font-bold text-white opacity-60">Function</span></div>
+                    <div class="math-symbol">=</div>
+                    <div class="result-box">Safe Return to Play</div>
+                </div>
+                <div class="pricing-consolidated-card">
+                    <div class="pricing-option"><div class="pricing-header"><div class="pricing-title">Basic Knee Test</div><div class="pricing-cost">1 100,-</div></div><div class="pricing-desc">A quick status check for ongoing rehabilitation. Simple functional markers to track progression.</div></div>
+                    <div class="pricing-option"><div class="pricing-header"><div class="pricing-title">Standard Assessment</div><div class="pricing-cost">1 750,-</div></div><div class="pricing-desc">Strength testing combined with exercise guidance. Regain muscle strength as quickly as possible.</div></div>
+                    <div class="pricing-option"><div class="pricing-header"><div class="pricing-title">Full Return to Play</div><div class="pricing-cost">2 580,-</div></div><div class="pricing-desc">Complete examination including strength, psychological screening, and full functional analysis.</div></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Slide 8: Marketing in Action (Stats on the side) -->
+        <div class="slide" id="slide-8">
+            <div class="flex flex-col items-center justify-center h-full px-20 content-reveal">
+                <header class="text-center mb-8">
+                    <span class="sub-label mb-2">Viral Impact</span>
+                    <h2 class="branding-text-bold grad-aurora viral-glitch-text" style="font-size: 3rem;">Marketing in Action</h2>
+                    <p class="text-lg text-white opacity-60 max-w-2xl mx-auto mt-2">
+                        The tech behind <b>355 million views</b> is now at your clinic. Recreate viral moments and put your brand in the spotlight.
+                    </p>
+                </header>
+
+                <div class="flex flex-row items-center justify-center gap-12">
+                    <!-- Left Stats -->
+                    <div class="flex flex-col gap-12 pr-10 border-r border-white/10">
+                        <div class="flex flex-col items-center">
+                            <div class="text-5xl font-black grad-aurora">9.1M+</div>
+                            <div class="text-xs uppercase tracking-tighter opacity-50 font-bold">Likes Combined</div>
+                        </div>
+                        <div class="flex flex-col items-center">
+                            <div class="text-5xl font-black grad-aurora">100%</div>
+                            <div class="text-xs uppercase tracking-tighter opacity-50 font-bold">Organic Reach</div>
+                        </div>
+                    </div>
+
+                    <!-- Video Grid -->
+                    <div class="flex flex-row gap-8">
+                        <div class="relative">
+                            <div class="portrait-video-container marketing-video-container shadow-2xl border-2 border-green-900/30">
+                                <video class="deep-dive-video" id="video-viral-1" muted loop playsinline>
+                                    <source src="https://storage.googleapis.com/intro_alphatek/videoer/What%E2%80%99s%20Your%20Animal%20Strength%EF%BC%9F.mp4" type="video/mp4">
+                                </video>
+                                <div class="viral-stat-overlay">
+                                    <div class="text-2xl font-black">234M</div>
+                                    <div class="text-[10px] opacity-80">Views</div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-3 text-[10px] font-bold uppercase tracking-widest opacity-40">"Animal Strength"</div>
+                        </div>
+
+                        <div class="relative">
+                            <div class="portrait-video-container marketing-video-container shadow-2xl border-2 border-green-900/30">
+                                <video class="deep-dive-video" id="video-viral-2" muted loop playsinline>
+                                    <source src="https://storage.googleapis.com/intro_alphatek/videoer/videoplayback.mp4" type="video/mp4">
+                                </video>
+                                <div class="viral-stat-overlay">
+                                    <div class="text-2xl font-black">121M</div>
+                                    <div class="text-[10px] opacity-80">Views</div>
+                                </div>
+                            </div>
+                            <div class="text-center mt-3 text-[10px] font-bold uppercase tracking-widest opacity-40">"What Animal?"</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const totalSlides = 8; 
+        const slides = document.querySelectorAll('.slide');
+        const titleLoop = document.getElementById('title-loop');
+        const bgImage = document.getElementById('bg-image');
+        const globalNav = document.getElementById('global-nav-grid');
+        
+        const videos = {
+            fitness: document.getElementById('video-fitness'),
+            shoulder: document.getElementById('video-shoulder'),
+            rtp: document.getElementById('video-rtp'),
+            run: document.getElementById('video-run'),
+            senior: document.getElementById('video-senior'),
+            viral1: document.getElementById('video-viral-1'),
+            viral2: document.getElementById('video-viral-2')
+        };
+
+        const navCards = {
+            fitness: document.getElementById('card-fitness'),
+            shoulder: document.getElementById('card-shoulder'),
+            rtp: document.getElementById('card-rtp'),
+            run: document.getElementById('card-run'),
+            senior: document.getElementById('card-senior')
+        };
+
+        function clearActiveNav() {
+            Object.values(navCards).forEach(card => card.classList.remove('active-topic'));
+        }
+
+        async function pauseAllVideos() {
+            for (const v of Object.values(videos)) { if (v) v.pause(); }
+        }
+
+        async function playVideo(video) {
+            if (!video) return;
+            try {
+                video.currentTime = 0;
+                await video.play();
+            } catch (err) {
+                if (err.name !== 'AbortError') console.error("Video play error:", err);
+            }
+        }
+
+        async function updateSlides() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlide) slide.classList.add('active');
+            });
+
+            await pauseAllVideos();
+
+            if (currentSlide > 3) {
+                bgImage.classList.add('force-hide');
+            } else {
+                bgImage.classList.remove('force-hide');
+            }
+
+            if (currentSlide === 0) {
+                titleLoop.classList.remove('fade-out');
+                bgImage.classList.remove('zoomed-out');
+                globalNav.classList.remove('visible', 'sidebar-layout');
+            } 
+            else if (currentSlide === 1) {
+                titleLoop.classList.add('fade-out');
+                bgImage.classList.add('zoomed-out');
+                globalNav.classList.add('visible');
+                globalNav.classList.remove('sidebar-layout');
+                clearActiveNav();
+            } 
+            else if (currentSlide >= 2 && currentSlide <= 6) {
+                titleLoop.classList.add('fade-out');
+                globalNav.classList.add('visible', 'sidebar-layout');
+                clearActiveNav();
+
+                if (currentSlide === 2) { navCards.fitness.classList.add('active-topic'); playVideo(videos.fitness); }
+                else if (currentSlide === 3) { navCards.shoulder.classList.add('active-topic'); playVideo(videos.shoulder); }
+                else if (currentSlide === 4) { navCards.rtp.classList.add('active-topic'); playVideo(videos.rtp); }
+                else if (currentSlide === 5) { navCards.run.classList.add('active-topic'); playVideo(videos.run); }
+                else if (currentSlide === 6) { navCards.senior.classList.add('active-topic'); playVideo(videos.senior); }
+            }
+            else {
+                titleLoop.classList.add('fade-out');
+                globalNav.classList.remove('visible', 'sidebar-layout');
+                if (currentSlide === 8) {
+                    playVideo(videos.viral1);
+                    playVideo(videos.viral2);
+                }
+            }
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') {
+                currentSlide = (currentSlide + 1) % (totalSlides + 1);
+                updateSlides();
+            } else if (e.key === 'ArrowLeft') {
+                currentSlide = currentSlide > 0 ? currentSlide - 1 : totalSlides;
+                updateSlides();
+            }
+        });
+
+        window.addEventListener('click', (e) => {
+            if(!e.target.closest('.service-card')) {
+                currentSlide = (currentSlide + 1) % (totalSlides + 1);
+                updateSlides();
+            }
+        });
+
+        Object.entries(navCards).forEach(([key, element], index) => {
+            element.addEventListener('click', (e) => {
+                e.stopPropagation();
+                currentSlide = index + 2; 
+                updateSlides();
+            });
+        });
+
+        // VISUAL EFFECTS
+        const aCanvas = document.getElementById('auroraCanvas');
+        const sCanvas = document.getElementById('synapseCanvas');
+        const aCtx = aCanvas.getContext('2d');
+        const sCtx = sCanvas.getContext('2d');
+        let width, height, time = 0;
+
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            aCanvas.width = sCanvas.width = width;
+            aCanvas.height = sCanvas.height = height;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        const blobs = [
+            { x: 0, y: 0, r: 800, h: 160, s: 0.02, seed: 1 },
+            { x: 0, y: 0, r: 900, h: 170, s: 0.015, seed: 2 },
+            { x: 0, y: 0, r: 700, h: 155, s: 0.025, seed: 3 },
+            { x: 0, y: 0, r: 1000, h: 165, s: 0.01, seed: 4 }
+        ];
+
+        const nodes = Array.from({ length: 30 }, () => ({
+            x: Math.random() * width, y: Math.random() * height,
+            vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4
+        }));
+
+        function drawAurora() {
+            aCtx.globalCompositeOperation = 'source-over';
+            aCtx.fillStyle = "#0D0D0D";
+            aCtx.fillRect(0, 0, width, height);
+            aCtx.globalCompositeOperation = 'screen';
+            blobs.forEach((blob, i) => {
+                blob.x = width / 2 + Math.sin(time * 0.7 * blob.seed) * (width * 0.4);
+                blob.y = height / 2 + Math.cos(time * 0.5 * blob.seed) * (height * 0.3);
+                const currentRadius = blob.r * (0.8 + Math.sin(time + i) * 0.2);
+                const grad = aCtx.createRadialGradient(blob.x, blob.y, 0, blob.x, blob.y, currentRadius);
+                const opacity = 0.12 + Math.sin(time * 0.5 + i) * 0.04;
+                grad.addColorStop(0, `hsla(${blob.h}, 60%, 40%, ${opacity})`);
+                grad.addColorStop(0.5, `hsla(${blob.h}, 50%, 20%, ${opacity * 0.4})`);
+                grad.addColorStop(1, 'transparent');
+                aCtx.fillStyle = grad;
+                aCtx.beginPath(); aCtx.arc(blob.x, blob.y, currentRadius, 0, Math.PI * 2); aCtx.fill();
+            });
+        }
+
+        function drawSynapses() {
+            sCtx.clearRect(0, 0, width, height);
+            nodes.forEach((n1, i) => {
+                n1.x += n1.vx; n1.y += n1.vy;
+                if (n1.x < 0 || n1.x > width) n1.vx *= -1;
+                if (n1.y < 0 || n1.y > height) n1.vy *= -1;
+                sCtx.fillStyle = "rgba(47, 124, 83, 0.2)";
+                sCtx.beginPath(); sCtx.arc(n1.x, n1.y, 1.2, 0, Math.PI * 2); sCtx.fill();
+                for (let j = i + 1; j < nodes.length; j++) {
+                    const n2 = nodes[j];
+                    const dist = Math.hypot(n1.x - n2.x, n1.y - n2.y);
+                    if (dist < 220) {
+                        const alpha = (1 - dist / 220) * 0.08;
+                        sCtx.strokeStyle = `rgba(47, 124, 83, ${alpha})`;
+                        sCtx.lineWidth = 0.5;
+                        sCtx.beginPath(); sCtx.moveTo(n1.x, n1.y); sCtx.lineTo(n2.x, n2.y); sCtx.stroke();
+                    }
+                }
+            });
+        }
+
+        function animate() {
+            time += 0.007; 
+            drawAurora();
+            drawSynapses();
+            requestAnimationFrame(animate);
+        }
+
+        window.onload = animate;
+    </script>
+</body>
+</html>
