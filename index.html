@@ -75,9 +75,9 @@
             font-size: clamp(2.5rem, 6vw, 4rem);
             font-weight: 800; 
             letter-spacing: var(--letter-spacing-tight); 
-            line-height: 1.25; /* Increased to fix descenders (g, y, j) */
+            line-height: 1.3; /* Increased for descenders (g, y) */
             font-family: var(--header-font);
-            padding-bottom: 0.1em; /* Extra safety for cutting */
+            padding-bottom: 0.15em;
         }
 
         .sub-label { 
@@ -94,7 +94,7 @@
             position: fixed; z-index: 100;
             display: grid; grid-template-columns: repeat(5, 1fr);
             gap: 20px; width: 100%; max-width: 1200px;
-            left: 50%; bottom: 120px; transform: translateX(-50%);
+            left: 50%; bottom: 125px; transform: translateX(-50%);
             transition: all 0.9s cubic-bezier(0.16, 1, 0.3, 1);
             opacity: 0; pointer-events: none;
         }
@@ -251,8 +251,8 @@
 
         /* --- LOGO --- */
         .bottom-logo {
-            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
-            height: 90px; z-index: 110; opacity: 0.8; pointer-events: none; /* Larger and lower */
+            position: fixed; bottom: 10px; left: 50%; transform: translateX(-50%);
+            height: 100px; z-index: 110; opacity: 0.8; pointer-events: none;
             transition: all 0.5s ease;
         }
 
@@ -316,7 +316,7 @@
         <div class="slide" id="slide-1">
             <div class="flex flex-col items-center justify-start h-full text-center pt-24">
                 <div class="branding-text-bold grad-aurora mb-2">SmartRehab™</div>
-                <div class="sub-label">Select clinical protocol</div>
+                <div class="sub-label">clinical protocols</div>
             </div>
         </div>
 
@@ -394,11 +394,11 @@
         <!-- Slide 7: Business Model -->
         <div class="slide" id="slide-7">
             <div class="flex flex-col items-center justify-center h-full px-20 content-reveal">
-                <header class="text-center mb-6">
+                <div class="w-full max-w-4xl flex flex-col items-start text-left mb-6">
                     <span class="sub-label mb-2">Clinic Revenue</span>
                     <h2 class="branding-text-bold grad-aurora" style="font-size: 3rem;">Build Your Business Model</h2>
-                    <p class="text-lg text-white opacity-60 max-w-2xl mx-auto mt-2">Combine traditional assessment with advanced objective data to create high-value packages.</p>
-                </header>
+                    <p class="text-lg text-white opacity-60 max-w-2xl mt-2">Combine traditional assessment with advanced objective data to create high-value packages.</p>
+                </div>
                 <div class="concept-triad">
                     <div class="triad-item"><div class="triad-icon-box"><i class="ph ph-barbell"></i></div><span class="text-xs uppercase tracking-widest font-bold text-white opacity-60">Strength</span></div>
                     <div class="math-symbol">+</div>
@@ -416,16 +416,16 @@
             </div>
         </div>
 
-        <!-- Slide 8: Marketing in Action (Stats on the side) -->
+        <!-- Slide 8: Marketing in Action (Left labels fix) -->
         <div class="slide" id="slide-8">
             <div class="flex flex-col items-center justify-center h-full px-20 content-reveal">
-                <header class="text-center mb-8">
+                <div class="w-full max-w-5xl flex flex-col items-start text-left mb-8">
                     <span class="sub-label mb-2">Viral Impact</span>
                     <h2 class="branding-text-bold grad-aurora viral-glitch-text" style="font-size: 3rem;">Marketing in Action</h2>
-                    <p class="text-lg text-white opacity-60 max-w-2xl mx-auto mt-2">
+                    <p class="text-lg text-white opacity-60 max-w-2xl mt-2">
                         The tech behind <b>355 million views</b> is now at your clinic. Recreate viral moments and put your brand in the spotlight.
                     </p>
-                </header>
+                </div>
 
                 <div class="flex flex-row items-center justify-center gap-12">
                     <!-- Left Stats -->
