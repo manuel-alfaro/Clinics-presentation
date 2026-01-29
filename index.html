@@ -75,7 +75,7 @@
             font-size: clamp(2.5rem, 6vw, 4rem);
             font-weight: 800; 
             letter-spacing: var(--letter-spacing-tight); 
-            line-height: 1.3; 
+            line-height: 1.3; /* Increased for descenders (g, y) */
             font-family: var(--header-font);
             padding-bottom: 0.15em;
         }
@@ -202,7 +202,7 @@
         .deep-dive-video { width: 100%; height: 100%; object-fit: cover; }
 
         /* --- BUSINESS MODEL SLIDE --- */
-        .concept-triad { display: flex; justify-content: center; align-items: center; gap: 30px; margin: 40px auto; }
+        .concept-triad { display: flex; justify-content: center; align-items: center; gap: 30px; margin: 30px auto; }
         .triad-item { display: flex; flex-direction: column; align-items: center; gap: 15px; }
         .triad-icon-box {
             width: 100px; height: 100px; background: rgba(255, 255, 255, 0.05);
@@ -416,7 +416,7 @@
             </div>
         </div>
 
-        <!-- Slide 8: Marketing in Action -->
+        <!-- Slide 8: Marketing in Action (Left labels fix) -->
         <div class="slide" id="slide-8">
             <div class="flex flex-col items-center justify-center h-full px-20 content-reveal">
                 <div class="w-full max-w-5xl flex flex-col items-start text-left mb-8">
@@ -605,19 +605,16 @@
         window.addEventListener('resize', resize);
         resize();
 
-        // Enhanced Aurora: Added more blobs for richer flow
         const blobs = [
-            { x: 0, y: 0, r: 850, h: 160, s: 0.02, seed: 1 },
-            { x: 0, y: 0, r: 950, h: 170, s: 0.015, seed: 2 },
-            { x: 0, y: 0, r: 750, h: 155, s: 0.025, seed: 3 },
-            { x: 0, y: 0, r: 1100, h: 165, s: 0.01, seed: 4 },
-            { x: 0, y: 0, r: 600, h: 180, s: 0.03, seed: 5 }
+            { x: 0, y: 0, r: 800, h: 160, s: 0.02, seed: 1 },
+            { x: 0, y: 0, r: 900, h: 170, s: 0.015, seed: 2 },
+            { x: 0, y: 0, r: 700, h: 155, s: 0.025, seed: 3 },
+            { x: 0, y: 0, r: 1000, h: 165, s: 0.01, seed: 4 }
         ];
 
-        // Enhanced Synapses: Increased node count from 30 to 50 for more "neural flow"
-        const nodes = Array.from({ length: 50 }, () => ({
+        const nodes = Array.from({ length: 30 }, () => ({
             x: Math.random() * width, y: Math.random() * height,
-            vx: (Math.random() - 0.5) * 0.6, vy: (Math.random() - 0.5) * 0.6
+            vx: (Math.random() - 0.5) * 0.4, vy: (Math.random() - 0.5) * 0.4
         }));
 
         function drawAurora() {
@@ -626,11 +623,11 @@
             aCtx.fillRect(0, 0, width, height);
             aCtx.globalCompositeOperation = 'screen';
             blobs.forEach((blob, i) => {
-                blob.x = width / 2 + Math.sin(time * 0.8 * blob.seed) * (width * 0.45);
-                blob.y = height / 2 + Math.cos(time * 0.6 * blob.seed) * (height * 0.35);
-                const currentRadius = blob.r * (0.85 + Math.sin(time + i) * 0.25);
+                blob.x = width / 2 + Math.sin(time * 0.7 * blob.seed) * (width * 0.4);
+                blob.y = height / 2 + Math.cos(time * 0.5 * blob.seed) * (height * 0.3);
+                const currentRadius = blob.r * (0.8 + Math.sin(time + i) * 0.2);
                 const grad = aCtx.createRadialGradient(blob.x, blob.y, 0, blob.x, blob.y, currentRadius);
-                const opacity = 0.15 + Math.sin(time * 0.5 + i) * 0.05;
+                const opacity = 0.12 + Math.sin(time * 0.5 + i) * 0.04;
                 grad.addColorStop(0, `hsla(${blob.h}, 60%, 40%, ${opacity})`);
                 grad.addColorStop(0.5, `hsla(${blob.h}, 50%, 20%, ${opacity * 0.4})`);
                 grad.addColorStop(1, 'transparent');
@@ -645,19 +642,15 @@
                 n1.x += n1.vx; n1.y += n1.vy;
                 if (n1.x < 0 || n1.x > width) n1.vx *= -1;
                 if (n1.y < 0 || n1.y > height) n1.vy *= -1;
-                
-                // Draw node
-                sCtx.fillStyle = "rgba(47, 124, 83, 0.3)";
-                sCtx.beginPath(); sCtx.arc(n1.x, n1.y, 1.5, 0, Math.PI * 2); sCtx.fill();
-                
-                // Enhanced connection distance and opacity
+                sCtx.fillStyle = "rgba(47, 124, 83, 0.2)";
+                sCtx.beginPath(); sCtx.arc(n1.x, n1.y, 1.2, 0, Math.PI * 2); sCtx.fill();
                 for (let j = i + 1; j < nodes.length; j++) {
                     const n2 = nodes[j];
                     const dist = Math.hypot(n1.x - n2.x, n1.y - n2.y);
-                    if (dist < 260) { // Increased distance from 220 to 260
-                        const alpha = (1 - dist / 260) * 0.12; // Increased base opacity
+                    if (dist < 220) {
+                        const alpha = (1 - dist / 220) * 0.08;
                         sCtx.strokeStyle = `rgba(47, 124, 83, ${alpha})`;
-                        sCtx.lineWidth = 0.8;
+                        sCtx.lineWidth = 0.5;
                         sCtx.beginPath(); sCtx.moveTo(n1.x, n1.y); sCtx.lineTo(n2.x, n2.y); sCtx.stroke();
                     }
                 }
@@ -665,7 +658,7 @@
         }
 
         function animate() {
-            time += 0.008; // Slightly faster time progression
+            time += 0.007; 
             drawAurora();
             drawSynapses();
             requestAnimationFrame(animate);
