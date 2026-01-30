@@ -146,7 +146,7 @@
         }
 
         /* --- SLIDE SYSTEM --- */
-        #slides-wrapper { position: relative; z-index: 40; width: 100%; height: 100%; }
+        #slides-wrapper { position: relative; z-index: 40; width: 100%; height: 100%; overflow-y: auto; overflow-x: hidden; }
         .slide {
             position: absolute; width: 100%; height: 100%;
             opacity: 0; visibility: hidden;
@@ -276,6 +276,104 @@
             55%, 95% { opacity: 1; transform: translateX(0); visibility: visible; }
             100% { opacity: 0; transform: translateX(20px); visibility: hidden; }
         }
+
+        /* =========================================
+           MOBILE RESPONSIVENESS (Max-width 768px)
+           ========================================= */
+        @media (max-width: 768px) {
+            /* Fix overflow */
+            body, html { overflow: hidden; }
+            .slide { overflow-y: auto; overflow-x: hidden; }
+
+            /* Logo & Intro */
+            .bottom-logo { height: 60px; bottom: 5px; }
+            #title-loop { left: 1.5rem !important; top: 25% !important; width: 90% !important; }
+            .branding-text-bold { font-size: 2.2rem !important; white-space: normal; }
+            .sub-label { font-size: 0.9rem !important; white-space: normal; }
+
+            /* Navigation - Main Menu Mode (Slide 1) */
+            #global-nav-grid {
+                grid-template-columns: 1fr !important;
+                width: 90% !important;
+                left: 50% !important;
+                bottom: 80px !important; /* Above logo */
+                gap: 10px !important;
+            }
+            .service-card {
+                min-height: 70px !important;
+                padding: 0.8rem !important;
+                flex-direction: row !important;
+                justify-content: flex-start !important;
+                gap: 15px;
+            }
+            .service-card i { font-size: 1.8rem !important; margin-bottom: 0 !important; }
+            .brand-suffix { font-size: 1rem !important; }
+
+            /* Navigation - Sidebar Mode (Slide 2+) becomes Bottom Tab Bar */
+            #global-nav-grid.sidebar-layout {
+                width: 100% !important;
+                left: 0 !important;
+                top: auto !important;
+                bottom: 0 !important;
+                transform: none !important;
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: space-around;
+                background: rgba(13, 13, 13, 0.95);
+                border-top: 1px solid rgba(255,255,255,0.1);
+                padding: 10px 5px !important;
+                gap: 5px !important;
+                z-index: 200;
+            }
+            #global-nav-grid.sidebar-layout .service-card {
+                flex-direction: column !important;
+                min-height: auto !important;
+                padding: 5px !important;
+                background: transparent !important;
+                border: none !important;
+                min-width: auto;
+            }
+            #global-nav-grid.sidebar-layout .service-card i { font-size: 1.4rem !important; margin-bottom: 0 !important; }
+            #global-nav-grid.sidebar-layout .brand-suffix { display: none !important; }
+            #global-nav-grid.sidebar-layout .service-card.active-topic i { color: var(--color-brand-accent); }
+
+            /* Content Slides (2-6) */
+            .slide.active .content-reveal { 
+                padding-top: 2rem; 
+                padding-bottom: 150px; /* Space for bottom nav */
+                flex-direction: column !important;
+            }
+            
+            /* Hide reports on small mobile to focus on video/text, or stack if space permits */
+            .report-display-card { display: none !important; } 
+
+            .portrait-video-container {
+                width: 80vw !important;
+                height: auto !important;
+                aspect-ratio: 9/16;
+                max-height: 50vh;
+            }
+            
+            /* Text Content */
+            .max-w-md { max-width: 90% !important; text-align: center; margin-top: 1rem; }
+            .branding-text-bold { font-size: 2.5rem !important; }
+
+            /* Business Model (Slide 7) */
+            .concept-triad { flex-direction: column !important; gap: 10px; margin: 20px 0; }
+            .math-symbol { transform: rotate(90deg); font-size: 1.5rem; }
+            .pricing-consolidated-card { 
+                grid-template-columns: 1fr !important; 
+                width: 100% !important;
+                margin-bottom: 100px; 
+            }
+            .pricing-option { border-right: none !important; border-bottom: 1px solid rgba(255,255,255,0.1); padding: 20px; }
+
+            /* Marketing (Slide 8) */
+            .marketing-video-container { width: 160px !important; height: 284px !important; }
+            .flex-row.gap-12 { flex-direction: column !important; gap: 2rem !important; }
+            .border-r { border-right: none !important; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 2rem; padding-right: 0 !important; }
+            .flex-row.gap-8 { flex-direction: row; gap: 10px !important; flex-wrap: wrap; justify-content: center; }
+        }
     </style>
 </head>
 <body>
@@ -292,17 +390,17 @@
 
     <!-- GLOBAL NAV GRID -->
     <div id="global-nav-grid">
-        <div class="service-card" id="card-fitness"><i class="ph ph-dna"></i><div class="brand-suffix grad-aurora">FitnessAge™</div></div>
-        <div class="service-card" id="card-shoulder"><i class="ph ph-person-arms-spread"></i><div class="brand-suffix grad-aurora">ShoulderScreening™</div></div>
-        <div class="service-card" id="card-rtp"><i class="ph ph-sneaker-move"></i><div class="brand-suffix grad-aurora">ReturnToPlay™</div></div>
-        <div class="service-card" id="card-run"><i class="ph ph-person-simple-run"></i><div class="brand-suffix grad-aurora">RunSafer™</div></div>
-        <div class="service-card" id="card-senior"><i class="ph ph-users"></i><div class="brand-suffix grad-aurora">SeniorFitness™</div></div>
+        <div class="service-card" id="card-fitness"><i class="ph ph-dna"></i><div class="brand-suffix grad-aurora">FitnessAge</div></div>
+        <div class="service-card" id="card-shoulder"><i class="ph ph-person-arms-spread"></i><div class="brand-suffix grad-aurora">ShoulderScreening</div></div>
+        <div class="service-card" id="card-rtp"><i class="ph ph-sneaker-move"></i><div class="brand-suffix grad-aurora">ReturnToPlay</div></div>
+        <div class="service-card" id="card-run"><i class="ph ph-person-simple-run"></i><div class="brand-suffix grad-aurora">RunSafer</div></div>
+        <div class="service-card" id="card-senior"><i class="ph ph-users"></i><div class="brand-suffix grad-aurora">SeniorFitness</div></div>
     </div>
 
     <div id="title-loop">
         <div class="relative h-48 flex flex-col items-start justify-start">
             <div class="fade-group msg-1">
-                <div class="branding-text-bold grad-aurora">SmartRehab™</div>
+                <div class="branding-text-bold grad-aurora">SmartRehab</div>
                 <div class="sub-label mt-3">Next-gen clinical framework</div>
             </div>
             <div class="fade-group msg-2">
@@ -314,21 +412,22 @@
     <div id="slides-wrapper">
         <div class="slide active" id="slide-0"></div>
         <div class="slide" id="slide-1">
-            <div class="flex flex-col items-center justify-start h-full text-center pt-24">
-                <div class="branding-text-bold grad-aurora mb-2">SmartRehab™</div>
+            <div class="flex flex-col items-center justify-start h-full text-center pt-24 md:pt-24 pt-32">
+                <div class="branding-text-bold grad-aurora mb-2">SmartRehab</div>
                 <div class="sub-label">clinical protocols</div>
             </div>
         </div>
 
         <!-- Slides 2-6 (Protocols) -->
+        <!-- Added md: prefixes to maintain desktop layout while allowing mobile overrides via CSS or Tailwind utility defaults -->
         <div class="slide" id="slide-2">
-            <div class="flex flex-row items-center justify-center gap-16 w-full h-full px-20">
-                <div class="flex flex-row items-center gap-16 ml-48 content-reveal">
+            <div class="flex flex-col md:flex-row items-center justify-center md:gap-16 gap-8 w-full h-full px-6 md:px-20">
+                <div class="flex flex-col md:flex-row items-center gap-8 md:gap-16 md:ml-48 content-reveal">
                     <div class="shrink-0 portrait-video-container shadow-2xl"><video class="deep-dive-video" id="video-fitness" muted loop playsinline><source src="https://storage.googleapis.com/intro_alphatek/videoer/Videoer%20colo/Age%20Test%202%20-%20NO%20TEXT%20ON%20-%20Alphatatek%20-%204k%20%20(1).mp4" type="video/mp4"></video></div>
                     <div class="shrink-0 report-display-card"><img src="https://storage.googleapis.com/intro_alphatek/reports/Skjermbilde%202026-01-28%20kl.%2017.38.43.png" alt="Fitness Age Report" class="report-img fitness-report-crop"></div>
-                    <div class="flex flex-col gap-0 max-w-md">
+                    <div class="flex flex-col gap-0 max-w-md items-center md:items-start text-center md:text-left">
                         <span class="sub-label mb-2">Motivational Insight</span>
-                        <h3 class="branding-text-bold grad-aurora" style="font-size: 3.5rem;">Fitness Age™</h3>
+                        <h3 class="branding-text-bold grad-aurora" style="font-size: 3.5rem;">Fitness Age</h3>
                         <p class="text-xl text-white font-light leading-relaxed opacity-80 mt-2">A motivational concept that compares biological age with functional age through objective tests of strength, balance, and function.</p>
                     </div>
                 </div>
@@ -336,13 +435,13 @@
         </div>
 
         <div class="slide" id="slide-3">
-            <div class="flex flex-row items-center justify-center gap-16 w-full h-full px-20">
-                <div class="flex flex-row items-center gap-16 ml-48 content-reveal">
+            <div class="flex flex-col md:flex-row items-center justify-center md:gap-16 gap-8 w-full h-full px-6 md:px-20">
+                <div class="flex flex-col md:flex-row items-center gap-8 md:gap-16 md:ml-48 content-reveal">
                     <div class="shrink-0 portrait-video-container shadow-2xl"><video class="deep-dive-video" id="video-shoulder" muted loop playsinline><source src="https://storage.googleapis.com/intro_alphatek/videoer/Videoer%20colo/Social%20Media%20-%20Alphatatek%20-%20Shoulder%20Test%20-%204k%20%20(1).mp4" type="video/mp4"></video></div>
                     <div class="shrink-0 report-display-card"><img src="https://storage.googleapis.com/intro_alphatek/reports/shoulder.png" alt="Shoulder Screening Report" class="report-img"></div>
-                    <div class="flex flex-col gap-0 max-w-md">
+                    <div class="flex flex-col gap-0 max-w-md items-center md:items-start text-center md:text-left">
                         <span class="sub-label mb-2">Overhead Readiness</span>
-                        <h3 class="branding-text-bold grad-aurora" style="font-size: 3.5rem;">Shoulder Screening™</h3>
+                        <h3 class="branding-text-bold grad-aurora" style="font-size: 3.5rem;">Shoulder Screening</h3>
                         <p class="text-xl text-white font-light leading-relaxed opacity-80 mt-2">The ASH test protocol ensures the shoulder is ready for regular loading. Objective analysis of isometric strength and rotational symmetry.</p>
                     </div>
                 </div>
@@ -350,13 +449,13 @@
         </div>
 
         <div class="slide" id="slide-4">
-            <div class="flex flex-row items-center justify-center gap-16 w-full h-full px-20">
-                <div class="flex flex-row items-center gap-16 ml-48 content-reveal">
+            <div class="flex flex-col md:flex-row items-center justify-center md:gap-16 gap-8 w-full h-full px-6 md:px-20">
+                <div class="flex flex-col md:flex-row items-center gap-8 md:gap-16 md:ml-48 content-reveal">
                     <div class="shrink-0 portrait-video-container shadow-2xl"><video class="deep-dive-video" id="video-rtp" muted loop playsinline><source src="https://storage.googleapis.com/intro_alphatek/videoer/Videoer%20colo/NO%20TEXT%20ON%20-%20Alphatatek%20-%20Knee%20Test%20-%204k%20.mp4" type="video/mp4"></video></div>
                     <div class="shrink-0 report-display-card"><img src="https://storage.googleapis.com/intro_alphatek/reports/Return%20to%20play.png" alt="Return to Play Report" class="report-img"></div>
-                    <div class="flex flex-col gap-0 max-w-md">
+                    <div class="flex flex-col gap-0 max-w-md items-center md:items-start text-center md:text-left">
                         <span class="sub-label mb-2">Knee Assessment</span>
-                        <h3 class="branding-text-bold grad-aurora" style="font-size: 3.5rem;">Return to Play™</h3>
+                        <h3 class="branding-text-bold grad-aurora" style="font-size: 3.5rem;">Return to Play</h3>
                         <p class="text-xl text-white font-light leading-relaxed opacity-80 mt-2">Robust assessment for determining readiness after knee injuries. Combines objective hop and jump data with symmetry analysis.</p>
                     </div>
                 </div>
@@ -364,13 +463,13 @@
         </div>
 
         <div class="slide" id="slide-5">
-            <div class="flex flex-row items-center justify-center gap-16 w-full h-full px-20">
-                <div class="flex flex-row items-center gap-16 ml-48 content-reveal">
+            <div class="flex flex-col md:flex-row items-center justify-center md:gap-16 gap-8 w-full h-full px-6 md:px-20">
+                <div class="flex flex-col md:flex-row items-center gap-8 md:gap-16 md:ml-48 content-reveal">
                     <div class="shrink-0 portrait-video-container shadow-2xl"><video class="deep-dive-video" id="video-run" muted loop playsinline><source src="https://storage.googleapis.com/intro_alphatek/videoer/Videoer%20colo/Running%20Version%20-%20NO%20TEXT%20ON%20-%20Alphatatek%20-%20Knee%20Test%20-%204k%20.mp4" type="video/mp4"></video></div>
                     <div class="shrink-0 report-display-card"><img src="https://storage.googleapis.com/intro_alphatek/reports/Return%20to%20play.png" alt="Run Safer Report" class="report-img"></div>
-                    <div class="flex flex-col gap-0 max-w-md">
+                    <div class="flex flex-col gap-0 max-w-md items-center md:items-start text-center md:text-left">
                         <span class="sub-label mb-2">Runner Protocol</span>
-                        <h3 class="branding-text-bold grad-aurora" style="font-size: 3.5rem;">Run Safer™</h3>
+                        <h3 class="branding-text-bold grad-aurora" style="font-size: 3.5rem;">Run Safer</h3>
                         <p class="text-xl text-white font-light leading-relaxed opacity-80 mt-2">A specific protocol to ensure a safe and effective return to running. Establishes performance baselines and tracks loading tolerance.</p>
                     </div>
                 </div>
@@ -378,13 +477,13 @@
         </div>
 
         <div class="slide" id="slide-6">
-            <div class="flex flex-row items-center justify-center gap-16 w-full h-full px-20">
-                <div class="flex flex-row items-center gap-16 ml-48 content-reveal">
+            <div class="flex flex-col md:flex-row items-center justify-center md:gap-16 gap-8 w-full h-full px-6 md:px-20">
+                <div class="flex flex-col md:flex-row items-center gap-8 md:gap-16 md:ml-48 content-reveal">
                     <div class="shrink-0 portrait-video-container shadow-2xl"><video class="deep-dive-video" id="video-senior" muted loop playsinline><source src="https://storage.googleapis.com/intro_alphatek/videoer/Videoer%20colo/Age%20Test%20-%20NO%20TEXT%20ON%20-%20Alphatatek%20-%204k%20.mp4" type="video/mp4"></video></div>
                     <div class="shrink-0 report-display-card"><img src="https://storage.googleapis.com/intro_alphatek/reports/senior%20raport.png" alt="Senior Fitness Report" class="report-img"></div>
-                    <div class="flex flex-col gap-0 max-w-md">
+                    <div class="flex flex-col gap-0 max-w-md items-center md:items-start text-center md:text-left">
                         <span class="sub-label mb-2">Fall Prevention</span>
-                        <h3 class="branding-text-bold grad-aurora" style="font-size: 3.5rem;">Senior Fitness™</h3>
+                        <h3 class="branding-text-bold grad-aurora" style="font-size: 3.5rem;">Senior Fitness</h3>
                         <p class="text-xl text-white font-light leading-relaxed opacity-80 mt-2">Assesses fall risk by testing balance, strength, and function. Vital for maintaining independence and active longevity in seniors.</p>
                     </div>
                 </div>
@@ -393,8 +492,8 @@
 
         <!-- Slide 7: Business Model -->
         <div class="slide" id="slide-7">
-            <div class="flex flex-col items-center justify-center h-full px-20 content-reveal">
-                <div class="w-full max-w-4xl flex flex-col items-start text-left mb-6">
+            <div class="flex flex-col items-center justify-center h-full px-6 md:px-20 content-reveal pt-20 md:pt-0">
+                <div class="w-full max-w-4xl flex flex-col items-center md:items-start text-center md:text-left mb-6">
                     <span class="sub-label mb-2">Clinic Revenue</span>
                     <h2 class="branding-text-bold grad-aurora" style="font-size: 3rem;">Build Your Business Model</h2>
                     <p class="text-lg text-white opacity-60 max-w-2xl mt-2">Combine traditional assessment with advanced objective data to create high-value packages.</p>
@@ -418,8 +517,8 @@
 
         <!-- Slide 8: Marketing in Action (Left labels fix) -->
         <div class="slide" id="slide-8">
-            <div class="flex flex-col items-center justify-center h-full px-20 content-reveal">
-                <div class="w-full max-w-5xl flex flex-col items-start text-left mb-8">
+            <div class="flex flex-col items-center justify-center h-full px-6 md:px-20 content-reveal pt-20 md:pt-0">
+                <div class="w-full max-w-5xl flex flex-col items-center md:items-start text-center md:text-left mb-8">
                     <span class="sub-label mb-2">Viral Impact</span>
                     <h2 class="branding-text-bold grad-aurora viral-glitch-text" style="font-size: 3rem;">Marketing in Action</h2>
                     <p class="text-lg text-white opacity-60 max-w-2xl mt-2">
@@ -427,9 +526,9 @@
                     </p>
                 </div>
 
-                <div class="flex flex-row items-center justify-center gap-12">
+                <div class="flex flex-col md:flex-row items-center justify-center gap-12">
                     <!-- Left Stats -->
-                    <div class="flex flex-col gap-12 pr-10 border-r border-white/10">
+                    <div class="flex flex-row md:flex-col gap-12 pr-0 md:pr-10 border-b md:border-b-0 md:border-r border-white/10 pb-8 md:pb-0">
                         <div class="flex flex-col items-center">
                             <div class="text-5xl font-black grad-aurora">9.1M+</div>
                             <div class="text-xs uppercase tracking-tighter opacity-50 font-bold">Likes Combined</div>
